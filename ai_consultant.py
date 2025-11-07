@@ -130,6 +130,26 @@ Always include disclaimer: "I can provide guidance, but I cannot replace an in-p
         if any(keyword in text_lower for keyword in self.EMERGENCY_KEYWORDS):
             return True
         
+        # Check for high fever (emergency temperature thresholds)
+        # 105°F (40.5°C) or higher is a medical emergency
+        fever_patterns = [
+            r'10[5-9]\s*f',  # 105-109°F (emergency)
+            r'1[1-9]\d\s*f',  # 110+°F (emergency)
+            r'40\.5\s*c',  # 40.5°C (emergency)
+            r'4[1-2]\.?\d*\s*c',  # 41.0-42.9°C (emergency)
+            r'4[3-9]\.?\d*\s*c',  # 43+°C (emergency)
+            r'10[5-9]\s*degrees',  # 105-109 degrees (emergency)
+            r'1[1-9]\d\s*degrees',  # 110+ degrees (emergency)
+        ]
+        
+        if 'fever' in text_lower or 'temperature' in text_lower or 'temp' in text_lower:
+            for pattern in fever_patterns:
+                if re.search(pattern, text_lower):
+                    return True
+            # Also check for explicit high fever mentions
+            if any(phrase in text_lower for phrase in ['high fever', 'very high fever', 'dangerous fever']):
+                return True
+        
         # Check for severe symptoms combined with emergency indicators
         if check_severity:
             has_severity = any(severity in text_lower for severity in self.EMERGENCY_SEVERITY)
@@ -171,8 +191,28 @@ What's bringing you in today? Please describe what you're experiencing."""
         symptoms = self.extract_symptoms(text)
         text_lower = text.lower()
         
-        # Determine symptom description
-        if 'breathing' in text_lower or 'breathe' in text_lower:
+        # Determine symptom description - check fever first as it's common
+        if 'fever' in text_lower or 'temperature' in text_lower or 'temp' in text_lower:
+            # Extract temperature if mentioned
+            temp_match = re.search(r'(\d+\.?\d*)\s*[fc°]', text_lower)
+            if temp_match:
+                temp = temp_match.group(1)
+                # Check if it's Fahrenheit or Celsius
+                if 'c' in text_lower or '°c' in text_lower:
+                    temp_float = float(temp)
+                    if temp_float >= 40.5:  # 40.5°C = 105°F
+                        symptom_desc = f"a fever of {temp}°C"
+                    else:
+                        symptom_desc = f"a high fever of {temp}°C"
+                else:
+                    temp_float = float(temp)
+                    if temp_float >= 105:
+                        symptom_desc = f"a fever of {temp}°F"
+                    else:
+                        symptom_desc = f"a high fever of {temp}°F"
+            else:
+                symptom_desc = "a high fever"
+        elif 'breathing' in text_lower or 'breathe' in text_lower:
             symptom_desc = "difficulty breathing"
         elif 'chest' in text_lower or 'cardiac' in text_lower or 'heart' in text_lower:
             symptom_desc = "chest pain or cardiac symptoms"
@@ -213,7 +253,7 @@ How does this sound to you? Do you have any questions about where to seek care?"
             if is_emergency:
                 messages.append({
                     "role": "system",
-                    "content": "IMPORTANT: The patient has described emergency symptoms. You must follow the emergency protocol exactly: Use 'Based on what you've told me...' format, state 'This is beyond what I can safely assess remotely', and recommend immediate medical care."
+                    "content": "IMPORTANT: The patient has described emergency symptoms (chest pain, difficulty breathing, severe pain, high fever 105°F/40.5°C or higher, stroke signs, etc.). You must follow the emergency protocol exactly: Use 'Based on what you've told me...' format, state 'This is beyond what I can safely assess remotely', and recommend immediate medical care. Do NOT provide self-care recommendations for emergencies."
                 })
             
             # Call OpenAI API
