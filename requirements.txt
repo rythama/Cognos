@@ -8,5 +8,8 @@ python-dotenv>=1.0.0
 flask>=3.0.0
 flask-cors>=4.0.0
 
+# Production WSGI server for Heroku
+gunicorn>=21.2.0
+
 # Note: If you encounter dependency conflicts with spyder or tensorflow,
 # consider using a virtual environment (see SETUP.md)

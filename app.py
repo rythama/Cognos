@@ -61,14 +61,22 @@ def health():
 if __name__ == '__main__':
     # Get port from environment variable or default to 5001
     # (5000 is often used by macOS AirPlay Receiver)
+    # Heroku sets PORT environment variable automatically
     port = int(os.environ.get('PORT', 5001))
     
-    # Run the app
-    # Note: use_reloader=False to avoid watchdog dependency issues
-    # Debug mode is still enabled for error traces, just without auto-reload
-    # Set debug=False and use_reloader=False for production
-    print(f"\n🚀 Starting CareBot web application on http://localhost:{port}")
-    print(f"   Open your browser to view the application\n")
-    print(f"   Note: Auto-reload disabled to avoid watchdog compatibility issues\n")
-    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
+    # Check if running on Heroku (production) or locally (development)
+    # Heroku sets DYNO environment variable
+    is_production = os.environ.get('DYNO') is not None
+    
+    if is_production:
+        # Production mode: Use gunicorn (defined in Procfile)
+        # This block won't run on Heroku since gunicorn is used instead
+        print(f"\n🚀 Starting CareBot web application in production mode")
+        app.run(host='0.0.0.0', port=port, debug=False)
+    else:
+        # Development mode: Use Flask development server
+        print(f"\n🚀 Starting CareBot web application on http://localhost:{port}")
+        print(f"   Open your browser to view the application\n")
+        print(f"   Note: Auto-reload disabled to avoid watchdog compatibility issues\n")
+        app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
 
