@@ -4,3 +4,9 @@ openai>=1.0.0
 # Optional: for environment variable management
 python-dotenv>=1.0.0
 
+# Web framework for frontend
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Note: If you encounter dependency conflicts with spyder or tensorflow,
+# consider using a virtual environment (see SETUP.md)
