@@ -7,7 +7,8 @@ An AI system designed to conduct primary care consultations, handling both routi
 This system provides a prototype AI consultant that can:
 - Handle mild symptoms with self-care recommendations
 - Detect and escalate emergency symptoms appropriately
-- Follow strict linguistic and empathy protocols
+- Follow strict linguistic and empathy protocols<img width="4534" height="4284" alt="CareBot-2025-11-09-042341" src="https://github.com/user-attachments/assets/db7accbf-1d74-4320-869b-17142ffa615a" />
+
 - Provide natural, comfortable patient interactions
 
 ## Files
