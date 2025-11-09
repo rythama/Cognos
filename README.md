@@ -7,8 +7,7 @@ An AI system designed to conduct primary care consultations, handling both routi
 This system provides a prototype AI consultant that can:
 - Handle mild symptoms with self-care recommendations
 - Detect and escalate emergency symptoms appropriately
-- Follow strict linguistic and empathy protocols<img width="4534" height="4284" alt="CareBot-2025-11-09-042341" src="https://github.com/user-attachments/assets/db7accbf-1d74-4320-869b-17142ffa615a" />
-
+- Follow strict linguistic and empathy protocols
 - Provide natural, comfortable patient interactions
 
 ## Files
@@ -144,3 +143,5 @@ The system now supports LLM integration using OpenAI's API:
 - LLM responses are guided by system instructions to maintain protocols
 - Self-care recommendations are symptom-specific
 - All interactions include appropriate safety disclaimers
+
+<img width="4534" height="4284" alt="CareBot-2025-11-09-042341" src="https://github.com/user-attachments/assets/db7accbf-1d74-4320-869b-17142ffa615a" />
